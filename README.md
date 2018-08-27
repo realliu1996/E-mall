@@ -1,5 +1,4 @@
-# E-mall
-EStore electronic mall
+# EStore electronic mall
 
 > EStore 电子商城
 
