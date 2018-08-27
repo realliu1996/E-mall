@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.ssm.dao.IBookDao">
+	
+	<resultMap type="com.briup.ssm.common.bean.Book" id="BookResult">
+		<id property="id" column="b_id" />
+		<result property="name" column="b_name" />
+        <result property="author" column="b_author" />
+		<result property="price" column="b_price" />
+        <result property="publish" column="b_publish" />
+        <result property="page" column="b_page" />
+        <result property="sort" column="b_sort" />
+        <result property="introduction" column="b_introduction" />
+	</resultMap>
+
+	<!-- 查找所有书籍 -->
+	<select id="queryAll"  resultMap="BookResult">
+		select * from t_book 
+	</select>
+	
+	<!-- 传入书籍id从数据库查找书籍 -->
+	<select id="queryById" parameterType="java.lang.Long" resultMap="BookResult">
+		select *
+		from t_book 
+		where b_id=#{id}
+	</select>
+
+</mapper>

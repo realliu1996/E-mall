@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.ssm.dao.IOrderDao">
+	
+	
+	<resultMap type="com.briup.ssm.common.bean.Customer" id="CustomerResult">
+		<id property="id" column="c_id" />
+		<result property="name" column="c_name" />
+		<result property="password" column="c_password" />
+		<result property="country" column="c_country" />
+		<result property="province" column="c_province" />
+		<result property="city" column="c_city" />
+		<result property="street1" column="c_street1" />
+		<result property="street2" column="c_street2" />
+		<result property="zip" column="c_zip" />
+		<result property="homephone" column="c_homephone" />
+		<result property="officephone" column="c_officephone" />
+		<result property="cellphone" column="c_cellphone" />
+		<result property="email" column="c_email" />
+	</resultMap> 
+	
+	<resultMap type="com.briup.ssm.common.bean.Book" id="BookResult">
+		<id property="id" column="b_id" />
+		<result property="name" column="b_name" />
+		<result property="author" column="b_author" />
+		<result property="price" column="b_price" />
+		<result property="publish" column="b_publish" />
+		<result property="page" column="b_page" />
+		<result property="sort" column="b_sort" />
+		<result property="introduction" column="b_introduction" />
+	</resultMap> 
+	
+	<resultMap type="com.briup.ssm.common.bean.Line" id="LineResult">
+		  <id column="ol_id" property="id" /> 
+		  <result column="ol_num" property="num" /> 
+		  <association property="book" resultMap="BookResult" /> 
+	</resultMap> 
+	
+	<resultMap type="com.briup.ssm.common.bean.Order" id="OrderResult">
+		  <id column="of_id" property="id" /> 
+		  <result column="of_cost" property="cost" /> 
+		  <result column="of_orderdate" property="orderDate" /> 
+		  <result column="of_payment" property="payment" /> 
+		  <association property="customer" resultMap="CustomerResult" /> 
+		  <collection property="lines" resultMap="LineResult" /> 
+	</resultMap> 
+	
+	
+	<!-- 把订单对象存入数据库 -->
+	<insert id="saveOrder" parameterType="com.briup.ssm.common.bean.Order" >
+		<selectKey keyColumn="of_id" keyProperty="id" 
+				resultType="Long" order="BEFORE">
+			select orderform_seq.nextval from dual
+		</selectKey>
+		insert into t_orderform values(#{id},#{cost},#{orderDate},#{payment},#{customer.id})
+	</insert>
+	
+	
+	<!-- 通过订单id级联查询4张表返回包含所需信息的订单对象 -->
+	<select id="findOrderById" parameterType="Long" resultMap="OrderResult">
+		select  c_id,c_name,c_country,c_province,c_city,c_street1,c_zip,c_homephone,c_officephone,c_cellphone,c_email,of_id,of_orderdate,of_payment,b_id,b_name,b_price,ol_orderid,ol_num,of_cost
+		from t_customer,t_orderform,t_orderline,t_book
+		where  of_customerid=c_id and ol_orderid=of_id and ol_bookid=b_id and  of_id=#{id}
+	</select>
+	
+	<!-- 通过用户id查找订单返回订单对象的基本信息 -->
+	<select id="findByIdReturnList" parameterType="Long" resultType="com.briup.ssm.common.bean.Order">
+		select of_id as id,of_cost as cost,of_payment as payment
+		from t_orderform,t_customer
+		where of_customerid=c_id and c_id=#{id}
+	</select>
+	
+	
+	<!-- 通过订单id删除订单 -->
+	<delete id="deleteOrder" parameterType="com.briup.ssm.common.bean.Order">
+		delete from t_orderform where of_id = #{id}
+	</delete>
+	
+</mapper>

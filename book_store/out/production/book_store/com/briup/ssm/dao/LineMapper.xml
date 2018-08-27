@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.ssm.dao.ILineDao">
+
+	<!-- 把传入的line对象存入数据库 -->
+	<insert id="saveLine" parameterType="com.briup.ssm.common.bean.Line" >
+		<selectKey keyColumn="ol_id" keyProperty="id" 
+				resultType="Long" order="BEFORE">
+			select orderline_seq.nextval from dual
+		</selectKey>
+		insert into t_orderline values(#{id},#{num},#{order.id},#{book.id})
+	</insert>
+	
+	<!-- 通过订单号删除订单项 -->
+	<delete id="deleteLine" parameterType="Long">
+		delete from t_orderline where ol_orderid = #{id}
+	</delete>
+
+</mapper>

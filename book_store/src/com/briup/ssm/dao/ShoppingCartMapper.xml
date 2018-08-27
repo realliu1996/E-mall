@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.ssm.dao.IShoppingCartDao">
+
+
+    <resultMap type="com.briup.ssm.common.bean.Customer" id="CustomerResult">
+        <id property="id" column="c_id" />
+        <result property="name" column="c_name" />
+        <result property="password" column="c_password" />
+        <result property="country" column="c_country" />
+        <result property="province" column="c_province" />
+        <result property="city" column="c_city" />
+        <result property="street1" column="c_street1" />
+        <result property="street2" column="c_street2" />
+        <result property="zip" column="c_zip" />
+        <result property="homephone" column="c_homephone" />
+        <result property="officephone" column="c_officephone" />
+        <result property="cellphone" column="c_cellphone" />
+        <result property="email" column="c_email" />
+    </resultMap>
+
+    <resultMap type="com.briup.ssm.common.bean.Book" id="BookResult">
+        <id property="id" column="b_id" />
+        <id property="name" column="b_name" />
+        <id property="author" column="b_author" />
+        <id property="price" column="b_price" />
+        <id property="publish" column="b_publish" />
+        <id property="page" column="b_page" />
+        <id property="sort" column="b_sort" />
+        <id property="introduction" column="b_introduction" />
+    </resultMap>
+
+
+    <resultMap type="com.briup.ssm.common.bean.Line" id="LineResult">
+        <id property="id" column="s_id" />
+        <id property="num" column="s_num" />
+        <association property="book" resultMap="BookResult" />
+        <association property="customer" resultMap="CustomerResult" />
+    </resultMap>
+
+
+    <insert id="saveShoppingCart" parameterType="com.briup.ssm.common.bean.Line" >
+        <selectKey keyColumn="s_id" keyProperty="id"
+                   resultType="Long" order="BEFORE">
+            select shoppingcart_seq.nextval from dual
+        </selectKey>
+        insert into t_shoppingcart
+        values(#{id},#{book.id},#{num},#{customer.id})
+    </insert>
+
+
+    <delete id="delShoppingCart" parameterType="Long">
+		delete from t_shoppingcart where s_customerid = #{id}
+	</delete>
+
+    <select id="findShoppingCart" parameterType="Long" resultMap="LineResult">
+		select s_id,s_num,b_id,c_id
+		from t_book,t_customer,t_shoppingcart
+		where b_id=s_bookid and c_id=s_customerid and s_customerid=#{id}
+	</select>
+
+</mapper>
