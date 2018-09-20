@@ -8,6 +8,11 @@
 3. 书籍添加购物车
 4. 订单提交，支付宝支付功能
 
+开发环境：
+- JavaSE 1.8
+- Tomcat 8.5
+- idea ultimate
+
 技术：
 - Spring
 - SpringMVC
